@@ -43,8 +43,23 @@ shape.canvas.addEventListener("mousedown", function(e){
 		// Set line properties and begin drawing from mousedown location
 		shape.ctx.strokeStyle = "black";
 	    shape.ctx.lineWidth = 5;
-		shape.ctx.beginPath();
 		shape.ctx.moveTo(shape.startX, shape.startY);
+	}
+	// Else allow use to create new center point
+	else {
+		// Store new center point in object
+		shape.centerX = e.offsetX;
+		shape.centerY = e.offsetY;
+		
+		// Clear entire canvas and restore original shape path
+		shape.ctx.clearRect(0, 0, shape.canvas.width, shape.canvas.height);
+		shape.ctx.restore();
+	
+		// Draw a 5x5 block @ center point
+		shape.ctx.fillStyle="#FF0000";
+		shape.ctx.fillRect(shape.centerX, shape.centerY, 5, 5);
+
+		shape.ctx.stroke();
 	}
 });
 
@@ -53,7 +68,6 @@ shape.canvas.addEventListener("mousedown", function(e){
 shape.canvas.addEventListener("mousemove", function(e){
 	// If mousedown event has occured actually draw line
 	if(shape.drawEnable){
-
 		// Get new coordinates at every new location (only local needed)
 		var x = e.offsetX;
 		var y = e.offsetY;
@@ -61,19 +75,26 @@ shape.canvas.addEventListener("mousemove", function(e){
 		// Continue the path to the new location and add stroke to see
 		shape.ctx.lineTo(x, y);
 	    shape.ctx.stroke();
+    
+		// Only disable overall drawing if there is some movement	
+		shape.drawDone = 1;
 	}
 });
 
 
 // mousedown eventlistener for shape drawing
 shape.canvas.addEventListener("mouseup", function(e){
-	// Finish line contour by closing path at starting point
-	shape.ctx.lineTo(shape.startX, shape.startY);
-	shape.ctx.stroke();
-    shape.ctx.closePath();
+	if (shape.drawEnable){
+		// Finish line contour by closing path at starting point
+		shape.ctx.lineTo(shape.startX, shape.startY);
+		shape.ctx.stroke();
+    	shape.ctx.closePath();
 
-    // Disable drawing for mousemove and disable overall drawing
-    shape.drawEnable = 0;
-    shape.drawDone = 1;
+		// Save path for redrawing after
+		shape.ctx.save();
+
+    	// Disable drawing for mousemove
+    	shape.drawEnable = 0;
+	}
 });
 
