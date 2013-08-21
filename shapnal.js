@@ -230,7 +230,7 @@ Contour.prototype.pointInterp = function(startX, startY, endX, endY){
 				y = (m * x) + b;
 			}
 
-			interp.push([x, y]);
+			interp.push([Math.round(x), Math.round(y)]);
 		}
 	}
 	// If xdif is smaller than ydif, traverse y and get all the y points
@@ -251,7 +251,7 @@ Contour.prototype.pointInterp = function(startX, startY, endX, endY){
 			if (m != 0){
 				x = (y - b)/m;
 			}
-			interp.push([x, y]);
+			interp.push([Math.round(x), Math.round(y)]);
 		}
 	}
 
