@@ -70,8 +70,8 @@ Shape.prototype.mouseDown = function(e){
 
 		// Add starting points to contour
 		this.contour.addPoint(e.offsetX, e.offsetY);
-		this.ctx.beginPath();
 		this.ctx.moveTo(e.offsetX, e.offsetY);
+		console.log("mousedowndraw");
 	}
 	// If shape is drawn and mouse is clicked, register new center point
 	else {
@@ -79,25 +79,20 @@ Shape.prototype.mouseDown = function(e){
 		this.centerX = e.offsetX;
 		this.centerY = e.offsetY;
 
-		// Clear entire canvas, restore original shape, and place no center
+		// Clear canvas, restore original shape, and place new center
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.restore();
-		this.ctx.stroke();
+		this.drawContour();
 
 		// Draw center point
-		this.ctx.moveTo(this.centerX, this.centerY);
 		this.ctx.fillStyle = this.ccol;
-		this.ctx.fillRect(this.centerX, this.centerY, this.crad, this.crad);
-
-		// Save state
-		this.ctx.save();
+		this.ctx.fillRect(this.centerX - this.crad/2, this.centerY - this.crad/2, this.crad, this.crad);
 	}
 };
 
 Shape.prototype.mouseMove = function(e){
 	// If drawing is enabled, draw the line\
 	if (this.drawEnable){
-
+		console.log("mousemovedraw");
 		// Store coords at mouse location 
 		var x = e.offsetX;
 		var y = e.offsetY;
@@ -105,7 +100,10 @@ Shape.prototype.mouseMove = function(e){
 		// Add this point to our contour
 		this.contour.addPoint(x, y);
 
-		// Draw the point itself
+		// Draw the point itself using a path
+		// We need this to be done instantaneously for the user
+		// So using a path is better than drawing each individual contour point
+		// We will draw actual contour points as rectangles after full path is done
 		this.ctx.lineTo(x, y);
 		this.ctx.stroke();
 	}
@@ -130,8 +128,10 @@ Shape.prototype.mouseUp = function(e){
 			this.ctx.stroke();
 			this.ctx.closePath();
 
-			// Save path for redrawing after
-			this.ctx.save();
+			// Draw contour using actual rectangles then save context so we can
+			// redraw this every frame next time 
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.drawContour();
 
 			this.drawEnable = 0;
 			this.drawComplete = 1;
@@ -146,6 +146,27 @@ Shape.prototype.mouseUp = function(e){
 	}
 };
 
+Shape.prototype.drawContour = function(e){
+	// Check if we have a contour to use
+	// Short circuit with || will make sure second statement doesn't cause error
+	if (typeof this.contour === 'undefined' || this.contour.points.length == 0){
+		console.log("Uh oh, looks like there isn't a contour to draw");
+		return;
+	}
+
+	// If we have valid contour, draw it
+	for (var i = 0; i < this.contour.points.length; i++){
+		this.ctx.fillStyle = "#000000";
+		// Had to shift both dimensions by 2 pixels to line up with path line???
+		this.ctx.fillRect(this.contour.points[i][0]-2, this.contour.points[i][1]-2, this.ctx.lineWidth, this.ctx.lineWidth+1);
+	}
+}
+
+Shape.prototype.drawCenter = function(e){
+	this.ctx.fillStyle = this.ccol;
+	this.ctx.fillRect(this.centerX - this.crad/2, this.centerY - this.crad/2, this.crad, this.crad);
+}	
+	
 
 Shape.prototype.trace = function(e){
 	e = e || window.event;
@@ -153,18 +174,15 @@ Shape.prototype.trace = function(e){
 		this.counter++;
 		// Restore shape by clearing canvas and restoring
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.restore();
-		this.ctx.stroke();
-
-	// Clear entire canvas, restore original shape, and place no center
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.ctx.restore();
-		this.ctx.stroke();
-
+		this.drawContour();
+		this.drawCenter();	
 		// Draw center point
+		this.ctx.beginPath();
 		this.ctx.moveTo(this.centerX, this.centerY);
-		this.ctx.lineTo(this.contour.points[this.counter][0], this.contour.points[this.counter][1]);
+		this.ctx.lineTo(this.contour.points[this.counter % this.contour.points.length][0], this.contour.points[this.counter % this.contour.points.length][1]);
 		this.ctx.stroke();
+		this.ctx.closePath();
+
 		this.counter++;	
 	}
 
@@ -261,13 +279,9 @@ Contour.prototype.pointInterp = function(startX, startY, endX, endY){
 
 
 
-// Testing
-var test = new Shape();
-var test2 = new Shape("shape", 400, 400);
-var test3 = new Shape("circle", 300, 300);
 
-console.log(Shape);
-console.log(test);
+// Testing
+var test2 = new Shape("shape", 400, 400);
 console.log(test2);
 
 
