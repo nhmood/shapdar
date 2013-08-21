@@ -58,6 +58,7 @@ function Shape(cid, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	this.ccol = typeof(ccol) === "undefined" ? "FF0000" : ccol;
 	this.crad = typeof(crad) === "undefined" ?     5    : crad;
 
+	this.counter = 0;
 
 }
 
@@ -87,9 +88,10 @@ Shape.prototype.mouseDown = function(e){
 		this.ctx.moveTo(this.centerX, this.centerY);
 		this.ctx.fillStyle = this.ccol;
 		this.ctx.fillRect(this.centerX, this.centerY, this.crad, this.crad);
+
+		// Save state
+		this.ctx.save();
 	}
-
-
 };
 
 Shape.prototype.mouseMove = function(e){
@@ -107,7 +109,6 @@ Shape.prototype.mouseMove = function(e){
 		this.ctx.lineTo(x, y);
 		this.ctx.stroke();
 	}
-
 };
 
 Shape.prototype.mouseUp = function(e){
@@ -146,6 +147,29 @@ Shape.prototype.mouseUp = function(e){
 };
 
 
+Shape.prototype.trace = function(e){
+	e = e || window.event;
+	if (e.keyCode == "37"){
+		this.counter++;
+		// Restore shape by clearing canvas and restoring
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.restore();
+		this.ctx.stroke();
+
+	// Clear entire canvas, restore original shape, and place no center
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.restore();
+		this.ctx.stroke();
+
+		// Draw center point
+		this.ctx.moveTo(this.centerX, this.centerY);
+		this.ctx.lineTo(this.contour.points[this.counter][0], this.contour.points[this.counter][1]);
+		this.ctx.stroke();
+		this.counter++;	
+	}
+
+};
+
 
 function Contour(startx, starty) {
 	this.startX = typeof(startx) === "undefined" ? 0 : startx;
@@ -169,8 +193,8 @@ Contour.prototype.addPoint = function(x, y){
 		// Concatenate to points array
 		var prev = this.points[this.points.length - 1];
 		var interp = this.pointInterp(prev[0], prev[1], x, y);
-
 		this.points = 	this.points.concat(interp);
+
 	}
 };
 
@@ -219,7 +243,9 @@ Contour.prototype.pointInterp = function(startX, startY, endX, endY){
 		// its the only way to not have separate for statements
 		// Add yDir to last point to make inclusive
 		var x = 0;
+		
 		for (var y = startY; y != (endY + yDir); y += yDir){
+
 			// If slope is inf or 0, then the X stays the same
 			x = startX;
 			if (m != 0){
@@ -235,7 +261,6 @@ Contour.prototype.pointInterp = function(startX, startY, endX, endY){
 
 
 
-
 // Testing
 var test = new Shape();
 var test2 = new Shape("shape", 400, 400);
@@ -245,3 +270,5 @@ console.log(Shape);
 console.log(test);
 console.log(test2);
 
+
+document.onkeydown = test2.trace.bind(test2);
