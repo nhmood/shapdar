@@ -52,6 +52,7 @@ function Shape(cid, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	this.drawComplete = 0;
 
 	// Center point for shape that line is drawn from
+	this.centerValid = 0;
 	this.centerX = 0;
 	this.centerY = 0;
 
@@ -75,6 +76,9 @@ Shape.prototype.mouseDown = function(e){
 	}
 	// If shape is drawn and mouse is clicked, register new center point
 	else {
+		// We now have a valid center point 
+		this.centerValid = 1;
+
 		// Set center for this instance
 		this.centerX = e.offsetX;
 		this.centerY = e.offsetY;
@@ -147,6 +151,7 @@ Shape.prototype.mouseUp = function(e){
 };
 
 Shape.prototype.drawContour = function(e){
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	// Check if we have a contour to use
 	// Short circuit with || will make sure second statement doesn't cause error
 	if (typeof this.contour === 'undefined' || this.contour.points.length == 0){
@@ -165,28 +170,7 @@ Shape.prototype.drawContour = function(e){
 Shape.prototype.drawCenter = function(e){
 	this.ctx.fillStyle = this.ccol;
 	this.ctx.fillRect(this.centerX - this.crad/2, this.centerY - this.crad/2, this.crad, this.crad);
-}	
-	
-
-Shape.prototype.trace = function(e){
-	e = e || window.event;
-	if (e.keyCode == "37"){
-		this.counter++;
-		// Restore shape by clearing canvas and restoring
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-		this.drawContour();
-		this.drawCenter();	
-		// Draw center point
-		this.ctx.beginPath();
-		this.ctx.moveTo(this.centerX, this.centerY);
-		this.ctx.lineTo(this.contour.points[this.counter % this.contour.points.length][0], this.contour.points[this.counter % this.contour.points.length][1]);
-		this.ctx.stroke();
-		this.ctx.closePath();
-
-		this.counter++;	
-	}
-
-};
+}
 
 
 function Contour(startx, starty) {
@@ -278,11 +262,36 @@ Contour.prototype.pointInterp = function(startX, startY, endX, endY){
 
 
 
+    
+
+
+
+
+debugTrace = function(e){
+	e = e || window.event;
+	if (e.keyCode == "37"){
+		this.counter++;
+		// Restore shape by clearing canvas and restoring
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		this.drawContour();
+		this.drawCenter();	
+		// Draw center point
+		this.ctx.beginPath();
+		this.ctx.moveTo(this.centerX, this.centerY);
+		this.ctx.lineTo(this.contour.points[this.counter % this.contour.points.length][0], this.contour.points[this.counter % this.contour.points.length][1]);
+		this.ctx.stroke();
+		this.ctx.closePath();
+
+		this.counter++;	
+	}
+
+};
+
+
 
 
 // Testing
-var test2 = new Shape("shape", 400, 400);
-console.log(test2);
+var shape = new Shape("shape", 400, 400);
 
-
-document.onkeydown = test2.trace.bind(test2);
+// Debug trace
+//document.onkeydown = debugTrace.bind(shape);
