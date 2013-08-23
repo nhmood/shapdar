@@ -173,7 +173,21 @@ Shape.prototype.drawCenter = function(e){
 }
 
 
+Shape.prototype.animate = function(index){
+	// Clear canvas and redraw contour	
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	this.drawContour();
+	this.drawCenter();
+	
+	// Draw a line from	center to next point
+	this.ctx.beginPath();
+	this.ctx.moveTo(this.centerX, this.centerY);
+	this.ctx.lineTo(this.contour.points[index][0], this.contour.points[index][1]);
+	this.ctx.stroke();
+	this.ctx.closePath();
 
+}
+	
 
 function Contour(startx, starty) {
 	this.startX = typeof(startx) === "undefined" ? 0 : startx;
@@ -288,8 +302,8 @@ function Animation(shape, plot){
 	this.timeoutID = 0;
 
 	// Animation settings
-	this.renderFPS = 1;		// FPS
-	this.pSkip = 5;				// Detail of animation
+	this.renderFPS = 60;		// FPS
+	this.pSkip = 2;				// Detail of animation
 								// Every nth point to plot
 	this.currFrame = 0;			// Global frame (position) to sync plot + shape
 	this.contourLength = 0;		// Number of points in contour of shape
@@ -334,7 +348,9 @@ Animation.prototype.animate = function(e){
 
 
 	// Animation Stuff Here!
-	console.log("Animating!");
+	this.shape.animate(this.currFrame % this.contourLength); 	
+	this.currFrame += this.pSkip;
+
 
 	// Create a timeout for another requestAnimationFrame
 	// Binding hell commence...not sure the full reason for these binds but I know the problems they solve
@@ -356,8 +372,6 @@ Animation.prototype.animate = function(e){
 // Cancel next animate() call by clearing the currently stored timeout
 Animation.prototype.stopAnimation = function(e){
 	window.clearTimeout(this.timeoutID);
-	console.log("Stop animating :(");
-
 }
 
 
