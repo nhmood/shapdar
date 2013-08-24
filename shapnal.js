@@ -174,6 +174,8 @@ Shape.prototype.drawCenter = function(e){
 
 
 Shape.prototype.animate = function(index){
+	var index = index % this.contour.points.length;
+
 	// Clear canvas and redraw contour	
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.drawContour();
@@ -288,6 +290,82 @@ function Plot(shape, cid, cheight, cwidth){
 	// Set size of canvas, use 200, 500 as default
 	this.canvas.width  = typeof(cwidth)  === "undefined" ? 200 : cwidth;
 	this.canvas.height = typeof(cheight) === "undefined" ? 500 : cheight;
+
+	// Create array the size of the full plot width
+	// Prefill with value half the height of the canvas
+	this.points = Array.apply(null, new Array(this.canvas.width)).map(Number.prototype.valueOf,(this.canvas.height/2));
+	this.pointCount = 0;
+	this.shape = shape;
+}
+
+// Windowed push function
+// Push to front and pop out of back to this instances points array
+Plot.prototype.push = function(value) {
+	this.points.pop();
+	this.points.unshift(value);
+}
+
+
+
+
+// Animation for X position
+Plot.prototype.animateX = function(index, skip){
+	// nPlot of Animation skips contour points in order to speed up animation but we still need
+	// to draw all the points to have a cohesive plot so this pushes correct values to instance points array  
+	for (var i = 0; i < skip; i++){
+		this.push(Math.round((this.shape.contour.points[(index + i) % this.shape.contour.points.length][0] * this.canvas.height) / this.shape.canvas.height));
+	}
+
+
+	// Clear canvas for redrawing
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);	
+	// Draw all the points in the points array 
+	for (var i = 0; i < this.canvas.width; i++){
+		this.ctx.fillRect(i, this.points[i], 2, 2);	
+	}
+
+}
+
+// Animation for Y position
+Plot.prototype.animateY = function(index, skip){
+	// nPlot of Animation skips contour points in order to speed up animation but we still need
+	// to draw all the points to have a cohesive plot so this pushes correct values to instance points array  
+	for (var i = 0; i < skip; i++){
+		this.push(Math.round((this.shape.contour.points[(index + i) % this.shape.contour.points.length][1] * this.canvas.height) / this.shape.canvas.height));
+	}
+
+
+	// Clear canvas for redrawing
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);	
+	// Draw all the points in the points array 
+	for (var i = 0; i < this.canvas.width; i++){
+		this.ctx.fillRect(i, this.points[i], 2, 2);	
+	}
+}
+
+
+
+// Animation for distance from center
+Plot.prototype.animateD = function(index, skip){
+	// nPlot of Animation skips contour points in order to speed up animation but we still need
+	// to draw all the points to have a cohesive plot so this pushes correct values to instance points array  
+	// This will also calculate distance from center to the point (d = sqrt((x2 -x1)^2 + ((y2 - y1)^2)))
+
+	var x1 = this.shape.centerX;
+	var y1 = this.shape.centerY; 
+	for (var i = 0; i < skip; i++){
+		var x2 = this.shape.contour.points[(index + i) % this.shape.contour.points.length][0];
+		var y2 = this.shape.contour.points[(index + i) % this.shape.contour.points.length][1];
+		var d = Math.sqrt(   Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2) );
+		this.push( Math.max(this.canvas.height - d, 1) );
+	}
+
+	// Clear canvas for redrawing
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	// Draw all the points in the points array
+	for (var i = 0; i < this.canvas.width; i++){
+		this.ctx.fillRect(i, this.points[i], 2, 2);
+	}
 }
 
 
@@ -303,10 +381,11 @@ function Animation(shape, plot){
 
 	// Animation settings
 	this.renderFPS = 60;		// FPS
-	this.pSkip = 2;				// Detail of animation
+	this.nPlot = 5;				// Detail of animation
 								// Every nth point to plot
 	this.currFrame = 0;			// Global frame (position) to sync plot + shape
 	this.contourLength = 0;		// Number of points in contour of shape
+
 }
 
 
@@ -348,8 +427,14 @@ Animation.prototype.animate = function(e){
 
 
 	// Animation Stuff Here!
-	this.shape.animate(this.currFrame % this.contourLength); 	
-	this.currFrame += this.pSkip;
+	this.shape.animate(this.currFrame);
+	
+	
+	this.plot.animateY(this.currFrame, this.nPlot);
+	//this.plot.animateX(this.currFrame, this.nPlot);
+	//this.plot.animateD(this.currFrame, this.nPlot);	
+
+	this.currFrame += this.nPlot;
 
 
 	// Create a timeout for another requestAnimationFrame
@@ -370,12 +455,13 @@ Animation.prototype.animate = function(e){
 
 
 // Cancel next animate() call by clearing the currently stored timeout
+// [todo] - Sometimes triggers but timeout is already done and new one set
+//		  - Fix so it grabs right ID and halts for sure
 Animation.prototype.stopAnimation = function(e){
 	window.clearTimeout(this.timeoutID);
+	console.log("Stop!");
 }
 
-
-    
 
 debugTrace = function(e){
 	e = e || window.event;
@@ -402,8 +488,9 @@ debugTrace = function(e){
 
 // Run
 var shape = new Shape("shape", 400, 400);
-var plot = new Plot(shape, "plot", 200, 500);
+var plot = new Plot(shape, "plot", 400, 500);
 var animation = new Animation(shape, plot);
+
 
 // Debug trace
 //document.onkeydown = debugTrace.bind(shape);
