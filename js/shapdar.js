@@ -16,7 +16,7 @@
 // Create necessary components
 
 var shape = new Shape("#shapnal1", 400, 400);
-var plot = new Plot(shape, "#shapnal1", 400, 500);
+var plot = new Plot(shape, "#shapnal1", 400, 600);
 var animation = new Animation(shape, plot);
 
 
