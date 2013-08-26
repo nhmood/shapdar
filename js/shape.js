@@ -187,11 +187,15 @@ Shape.prototype.animate = function(index){
 Shape.prototype.borderLine = function(index){
 	var index = index % this.contour.points.length;
 	// Draw line from contour to edge (to match GIF) if Y animation
-	this.ctx.beginPath();
-	this.ctx.moveTo(this.contour.points[index][0], this.contour.points[index][1]);
-	this.ctx.lineTo(this.canvas.width, this.contour.points[index][1]);
-	this.ctx.stroke();
-	this.ctx.closePath();
+	// Was using lineTo before but wasn't matching up right, using fillRect now
+	// Fill rect from current x position to width of canvas @ y position
+	for (var i = this.contour.points[index][0]; i < this.canvas.width; i++){
+		this.ctx.fillStyle = this.ctx.strokeStyle;
+		this.ctx.fillRect(i, this.contour.points[index][1], this.ctx.lineWidth, this.ctx.lineWidth);
+	}
+
+	// Fill in intersection point with dot
+	this.ctx.fillStyle = this.ccol;
 	this.ctx.fillRect(this.contour.points[index][0]-2.5, this.contour.points[index][1]-2.5, 5, 5);
 
 }

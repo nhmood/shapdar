@@ -46,7 +46,7 @@ Plot.prototype.animateX = function(index, skip){
 	// nPlot of Animation skips contour points in order to speed up animation but we still need
 	// to draw all the points to have a cohesive plot so this pushes correct values to instance points array  
 	for (var i = 0; i < skip; i++){
-		this.push(Math.round((this.shape.contour.points[(index + i) % this.shape.contour.points.length][0] * this.canvas.height) / this.shape.canvas.height));
+		this.push(Math.round((this.shape.contour.points[(Math.abs(index - skip + i)) % this.shape.contour.points.length][0] * this.canvas.height) / this.shape.canvas.height));
 	}
 
 
@@ -63,9 +63,9 @@ Plot.prototype.animateX = function(index, skip){
 // Animation for Y position
 Plot.prototype.animateY = function(index, skip){
 	// nPlot of Animation skips contour points in order to speed up animation but we still need
-	// to draw all the points to have a cohesive plot so this pushes correct values to instance points array  
+	// to draw all the points to have a cohesive plot so this pushes correct values to instance points array
 	for (var i = 0; i < skip; i++){
-		this.push(Math.round((this.shape.contour.points[(index + i) % this.shape.contour.points.length][1] * this.canvas.height) / this.shape.canvas.height));
+		this.push(Math.round((this.shape.contour.points[(Math.abs(index - skip + i)) % this.shape.contour.points.length][1] * this.canvas.height) / this.shape.canvas.height));
 	}
 
 
@@ -105,3 +105,23 @@ Plot.prototype.animateD = function(index, skip){
 		this.ctx.fillRect(i, this.points[i], this.ctx.lineWidth, this.ctx.lineWidth);	
 	}
 }
+
+// Bit Crusher animation
+Plot.prototype.animateBC = function(index, skip){
+	// Put in the value and don't take into consideration the skips used for speeding up
+	this.push(Math.round((this.shape.contour.points[(index) % this.shape.contour.points.length][1] * this.canvas.height) / this.shape.canvas.height));
+	
+	// Clear canvas for redrawing
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);	
+	// Draw all the points in the points array 
+	this.ctx.fillStyle = this.ctx.strokeStyle;
+	this.ctx.moveTo(0, this.points[0]);
+	for (var i = 0; i < this.canvas.width; i+= skip){
+		this.ctx.lineTo(i, this.points[i+skip]);
+		this.ctx.fillRect(i, this.points[i], this.ctx.lineWidth, this.ctx.lineWidth);
+		this.ctx.moveTo(i, this.points[i]);
+	}
+
+	this.shape.borderLine(index);
+}
+
