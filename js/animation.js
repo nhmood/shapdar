@@ -173,4 +173,22 @@ Animation.prototype.reset = function(e){
 	this.shape.reset();
 	this.plot.reset();
 
+	// Reset HTML controls
+	// Uncheck gridlines
+	$(this.dID + ' input.gl').attr("checked", false);
+
+	// Reset line width
+	$(this.dID + ' input.lw').attr("value", this.shape.ctx.lineWidth);
+	$(this.dID + ' span.lw').text(this.shape.ctx.lineWidth);
+
+	// Reset speed
+	$(this.dID + ' input.ps').attr("value", this.nPlot);
+	$(this.dID + ' span.ps').text(this.nPlot);
+
+	// Reset animation type
+	$(this.dID + ' select.anim').val('');
+
+	// Reset line color
+	$(this.dID + ' select.lc').val('');
 }
+
