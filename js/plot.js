@@ -21,7 +21,7 @@ function Plot(shape, did, cheight, cwidth){
 	this.canvas.width  = typeof(cwidth)  === "undefined" ? 200 : cwidth;
 	this.canvas.height = typeof(cheight) === "undefined" ? 500 : cheight;
 
-	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#c95f5e" : lstyle;
 	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
 
@@ -129,7 +129,7 @@ Plot.prototype.animateBC = function(index, skip){
 Plot.prototype.reset = function(lstyle, lwidth){
 
 	// Reset line style
-	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#c95f5e" : lstyle;
 	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
 	// Reset plot points and count

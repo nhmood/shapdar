@@ -32,7 +32,7 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	this.ctx = this.canvas.getContext("2d");
 
 	// Line parameters default
-	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#c95f5e" : lstyle;
 	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
 	// Create contour object to hold contour, gets populated from mouse events
@@ -53,7 +53,7 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	this.centerY = 0;
 
 	// Make center point red always (gets changed to black when color is red though)
-	this.ccol = typeof(ccol) === "undefined" ? "#c95f5e" : ccol;
+	this.ccol = typeof(ccol) === "undefined" ? "#0099ff" : ccol;
 	this.crad = typeof(crad) === "undefined" ?     5    : crad;
 
 
@@ -205,7 +205,7 @@ Shape.prototype.borderLine = function(index){
 Shape.prototype.reset = function(lstyle, lwidth, ccol, crad){
 
 	// Reset line style
-	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#c95f5e" : lstyle;
 	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
 	// Reste contour
@@ -221,7 +221,7 @@ Shape.prototype.reset = function(lstyle, lwidth, ccol, crad){
 	this.centerY = 0;
 
 	// Reset center colors (not really necessary)
-	this.ccol = typeof(ccol) === "undefined" ? "#c95f5e" : ccol;
+	this.ccol = typeof(ccol) === "undefined" ? "#0099ff" : ccol;
 	this.crad = typeof(crad) === "undefined" ?     5    : crad;
 
 	// Clear canvas and remove any existing paths
