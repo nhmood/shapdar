@@ -13,16 +13,16 @@
 // Plot class to store/plot the signal 
 function Plot(shape, did, cheight, cwidth){
 	// Grab canvas by ID, use "plot" as default
-	this.cID = typeof(cid) === "undefined" ? "" : did;
-	this.canvas = $(did + " .plot")[0];
+	this.dID = typeof(did) === "undefined" ? "" : did;
+	this.canvas = $(this.dID + " .plot")[0];
 	this.ctx = this.canvas.getContext('2d');
 	
 	// Set size of canvas, use 200, 500 as default
 	this.canvas.width  = typeof(cwidth)  === "undefined" ? 200 : cwidth;
 	this.canvas.height = typeof(cheight) === "undefined" ? 500 : cheight;
 
-	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "black" : lstyle;
-	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3    : lwidth;
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
 
 	// Create array the size of the full plot width

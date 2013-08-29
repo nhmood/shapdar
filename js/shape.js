@@ -13,9 +13,9 @@
 
 function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	// Grab canvas by ID, use "shape" as default
-	this.cID = typeof(did) === "undefined" ? "" : did;
+	this.dID = typeof(did) === "undefined" ? "" : did;
 	// Use JQuery selector to get the .shape class within the specified div
-	this.canvas = $(did + ' .shape')[0];
+	this.canvas = $(this.dID + ' .shape')[0];
 
 	// Add event handlersr for mouse actions
 	// Use .bind(this) to scope "this" to Shape not canvas
@@ -32,8 +32,8 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	this.ctx = this.canvas.getContext("2d");
 
 	// Line parameters default
-	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "black" : lstyle;
-	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3    : lwidth;
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
 	// Create contour object to hold contour, gets populated from mouse events
 	this.contour = new Contour();
@@ -53,7 +53,7 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	this.centerY = 0;
 
 	// Make center point red always (gets changed to black when color is red though)
-	this.ccol = typeof(ccol) === "undefined" ? "FF0000" : ccol;
+	this.ccol = typeof(ccol) === "undefined" ? "#c95f5e" : ccol;
 	this.crad = typeof(crad) === "undefined" ?     5    : crad;
 
 

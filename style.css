@@ -1,40 +1,124 @@
 body {
+	position: static;
+	margin: auto;
+	width: 800px;
+
 	font-family: 'Indie Flower', cursive;
-	margin: 0px 200px;
+    -webkit-font-smoothing: antialiased !important;
 }
 
-h1 {
-	font-size: 50px;
-	text-align: center;
+canvas {
+	border: 1px solid black;
 }
 
-p {
+button, select  {
+	font-family: 'Indie Flower', cursive;
+    font-size: 25px;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+a {
+    color: #0099ff;
+    text-decoration: none;
+    
+    transition: color 0.5s ease-in-out;
+    -webkit-transition: color 0.5s ease-in-out;
+    -moz-transition: color 0.5s ease-in-out;
+    -ms-transition: color 0.5s ease-in-out;
+    -o-transition: color 0.5s ease-in-out;
+}
+
+a:hover {
+    color: #323232;
+    text-decoration: none;
+}
+
+#title {
+	margin-top: 0px;
+	margin-bottom: 30px;
+}
+
+#title h1 {
+	display: inline-block;
+	margin: 0px 0px;
+
+	font-size: 100px;
+}
+
+#title h2 {
+	display: inline-block;
+	margin: 0px 0px;
+	padding-left: 185px;
+
+	font-size: 30px;
+}
+
+#title hr {
+	margin-top: -45px;
+	margin-bottom: 25px;
+
+	color: #323232;
+}
+
+#intro {
+	margin-top: 0px;
+
 	font-size: 25px;
 	text-align: center;
 }
 
-canvas {
-	text-align: center;
-	border: 1px solid black;
+#controls {
+	display: table-cell;
+	width: 40%;
+	vertical-align: top;
+	font-size: 25px;
+}
+
+#controls h1 {
 	margin: 0px;
 	padding: 0px;
 
+	font-size: 50px;
+	text-align: center;
 }
 
-#controls {
-	float: left;
-}
 
 #instructions {
-	float: right;
+	display: table-cell;
+	vertical-align: top;	
+
+	text-align: left;
 }
 
+#instructions h1 {
+	margin: 0px;
+	padding: 0px;
 
+	font-size: 50px;
+	text-align: center;
+}
+
+#instructions p {
+	margin: 0px;
+	padding: 0px;
+
+	font-size: 25px;
+}
+
+#instructions li {
+	font-size: 25px;
+}
+
+#note {
+	clear: both;
+	font-size: 15px;
+
+}
 
 #footer {
 	clear: both;
     margin: 10px 100px;
-    font-size: 16px;
+    font-size: 20px;
 }
 
 #footer hr {
@@ -52,7 +136,6 @@ canvas {
     -moz-transition: color 0.5s ease-in-out;
     -ms-transition: color 0.5s ease-in-out;
     -o-transition: color 0.5s ease-in-out;
-
 }
 
 #footer a:hover {
@@ -62,15 +145,12 @@ canvas {
 #footer #text {
     display: inline-block;
     vertical-align: text-top;
-
-
 }
 
 #footer #icons {
     display: inline-block;
     float: right;
     vertical-align: text-top;
-
 }
 
 #footer #icons a {
@@ -82,6 +162,4 @@ canvas {
 #footer #icons a:hover {
     text-decoration: none;
     color: #0099ff;
-
 }
-

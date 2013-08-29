@@ -1,71 +1,101 @@
 <!doctype html>
 <head>
 <title>shapdar - Shape Radar...kinda</title>
-<link rel="stylesheet" type="text/css" href="style.css"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="icon" type="icon/png" href="favicon.png">
+
 <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
- <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
 <meta charset="UTF-8">
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-42602876-1', 'goosecode.com');
+  ga('send', 'pageview');
+
+</script>
+
 </head>
 <body>
 
-<h1>shapdar - Shape Radar...kinda</h1>
-<p>
-This project was created after seeing <a href="http://imgur.com/DWuA6Vn" target="_blank">this</a> animation. <br />
-I thought, I bet I could do that. <br /> Then I thought, I bet I could do that for any arbitrary shape. <br />
-Then I did, yeahhhhhhhh.
-</p>
+<div id="title">
+	<h1>shapdar</h1>
+	<h2>Shape Radar...kinda</h2>
+	<hr />
+</div>
 
-<div id="shapnal1">
+<div id="intro">
+	<p>
+	This project was created after seeing <a href="http://imgur.com/DWuA6Vn" target="_blank">this</a> animation <br />
+	posted by my friend <a href="https://twitter.com/eugenekolo" target="_blank">@eugenekolo</a>. <br /> <br />
+	I thought, I bet I could do that. <br />
+	Then I thought, I bet I could do that, for any arbitrary shape. <br />
+	Then I did, yeahhhhhhhh. <br /><br />
 
+	Powered by <a href="http://en.wikipedia.org/wiki/Canvas_element" target="_blank">HTML5 Canvas</a>, <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JS</a>, and the <a href="http://stackoverflow.com" target="_blank">interwebs</a> and stuff. <br />
+	</p>
+</div>
+<div id="shapdar">
 	<canvas class="shape"></canvas><canvas class="plot"></canvas>
 	<br />
 
 	<button class="start" onclick="animation.beginAnimation()">Animate!</button>
 	<button class="stop" onclick="animation.stopAnimation()">Stop!</button>
 	<br />
-
-	<div id="controls">
-		<h1>Controls</h1>
-		Line width: <span class="lw">3</span>
-		<input class="lw" type="range" min="1" max="5" value="3" />
-		<br />
-
-		Speed: <span class="ps">5</span>
-		<input class="ps" type="range" min="1" max="20" value="5" />
-		<br />
-
-		Plot Type: <select class="anim">
-		<option value="animateY">Y Distance</option>
-		<option value="animateX">X Distance</option>
-		<option value="animateD">Distance from Center</option>
-		<option value="animateBC">Bit Crusher</option>
-		</select>
-
-		<br />
-
-		Line Color: <select class="lc">
-		<option value="black">Black</option>
-		<option value="red">Red</option>
-		<option value="blue">Blue</option>
-		<option value="green">Green</option>
-		</select>
-	</div>
-
 </div>
+
+<div id="controls">
+	<h1>Controls</h1>
+	Line width:&nbsp;&nbsp;<span class="lw">3</span>
+	<input class="lw" type="range" min="1" max="5" value="3" />
+	<br />
+
+	Speed:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ps">5</span>
+	<input class="ps" type="range" min="1" max="20" value="5" />
+	<br />
+
+	Plot Type: <select class="anim">
+	<option value="animateY">Y Distance</option>
+	<option value="animateX">X Distance</option>
+	<option value="animateD">Radius</option>
+	<option value="animateBC">Bit Crusher</option>
+	</select>
+
+	<br />
+
+	Line Color: &nbsp;<select class="lc">
+	<option value="#323232">Black</option>
+	<option value="#c95f5e">Red</option>
+	<option value="#0099ff">Blue</option>
+	<option value="#53c044">Green</option>
+	</select>
+</div>
+
 
 <div id="instructions">
 	<h1>Instructions</h1>
 	<p>
-	Step 1: Cut a whole in the box <br />
-	Just kidding. <br />
-	1. Draw a shape in the window on the left <br />
-	2. Click somewhere in the same box to place a "center" <br />
-	3. Click animate to animate <br />
-	4. Mess around with the options to mess around with some options <br />
+	Step 1, Cut a hole in the box....<br />
+	Just kidding <br />
 	</p>
-</div>
 
+	<ol>
+		<li>Use <a href="https://www.google.com/intl/en/chrome/browser/" target="_blank">Chrome</a>, on a desktop* </li>
+		<li>Draw a shape in the box on the left </li>
+		<li>Click in the same box to place a "center" </li>
+		<li>Click animate to animate </li>
+		<li>Mess around with the options to mess around with some options </li>
+	</ol>
+	<br />
+</div>
+<div id="note">
+	*Not sure why but Firefox refuses to work :(, but Chrome seems to work fine! Problem occurs @ line 83 in contour.js, the for loop statement with the != condition. I tried printing the bounds (won't even get that far in FF but in Chrome) and they seem to not hit an infinite loop type deal, but who knows. If anyone wants to figure out the problem, a generous bounty is yours. And by generous I mean you get your name on this page and a real/virtual high five depending on your vicinity to me. <br />
+	Also not tested on Safari, lol. Also, doesn't work on phone/tablet as there isn't a mouseup/down/move type event afaik.  
+</div>
 
 <div id="footer">
     <hr />
