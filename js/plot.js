@@ -24,7 +24,6 @@ function Plot(shape, did, cheight, cwidth){
 	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#c95f5e" : lstyle;
 	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
-
 	// Create array the size of the full plot width
 	// Prefill with value half the height of the canvas
 	this.points = Array.apply(null, new Array(this.canvas.width)).map(Number.prototype.valueOf,(this.canvas.height/2));
@@ -39,6 +38,34 @@ Plot.prototype.push = function(value) {
 	this.points.unshift(value);
 }
 
+Plot.prototype.drawGrid = function(e){
+	if (this.shape.gridEnable){
+		this.ctx.beginPath();
+		// Draw Y axis grids
+		for (var i = 0; i < this.canvas.width; i += Math.round(this.shape.canvas.width / this.shape.gridSize)){
+			this.ctx.moveTo(i, 0);
+			this.ctx.lineTo(i, this.canvas.height);
+		}
+
+		// Draw X axis grids
+		for (var i = 0; i < this.canvas.height; i+= Math.round(this.shape.canvas.height / this.shape.gridSize)){
+			this.ctx.moveTo(0, i);
+			this.ctx.lineTo(this.canvas.width, i);
+		}
+
+		// Store previous line width and style so we don't mess up our actual shape
+		var prevWidth = this.ctx.lineWidth;
+		var prevStyle = this.ctx.strokeStyle;
+
+		this.ctx.lineWidth = 1;
+		this.ctx.strokeStyle = "#000000";
+		this.ctx.stroke();
+		
+		// Reset our previous line style and width
+		this.ctx.lineWidth = prevWidth;
+		this.ctx.strokeStyle = prevStyle;
+	}
+}
 
 
 // Animation for X position
@@ -57,6 +84,8 @@ Plot.prototype.animateX = function(index, skip){
 	for (var i = 0; i < this.canvas.width; i++){
 		this.ctx.fillRect(i, this.points[i], this.ctx.lineWidth, this.ctx.lineWidth);	
 	}
+
+	this.drawGrid();
 
 }
 
@@ -78,9 +107,9 @@ Plot.prototype.animateY = function(index, skip){
 	}
 
 	this.shape.borderLine(index);
+		this.drawGrid();
+
 }
-
-
 
 // Animation for distance from center
 Plot.prototype.animateD = function(index, skip){
@@ -104,6 +133,9 @@ Plot.prototype.animateD = function(index, skip){
 	for (var i = 0; i < this.canvas.width; i++){
 		this.ctx.fillRect(i, this.points[i], this.ctx.lineWidth, this.ctx.lineWidth);	
 	}
+
+	this.drawGrid();
+
 }
 
 // Bit Crusher animation
@@ -123,6 +155,9 @@ Plot.prototype.animateBC = function(index, skip){
 	}
 
 	this.shape.borderLine(index);
+
+	this.drawGrid();
+
 }
 
 // Reset plot to defaults and blank canvas

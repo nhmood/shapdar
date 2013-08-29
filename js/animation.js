@@ -32,11 +32,19 @@ function Animation(did, shape, plot){
 	this.jInit();
 }
 
-
+// jQuery stuff for option changing 
+// This stuff is pretty messy, like really messy
+// I recall the entire selector a couple times so I can get the value of
+// the input (for checkbox as well as sliders), this can prob be done better
 Animation.prototype.jInit = function(e){
-	// JQuery stuff for option changing
-	// Line width change
 	var that = this;
+	
+	// Grid lines 
+	$( this.dID + ' input.gl').change(function(e){
+		shape.gridEnable = $(that.dID + ' input.gl').is(':checked');
+	})	
+
+	// Line width change
 	$( this.dID + ' input.lw').change(function(e){
 		$(that.dID + ' span.lw').text(this.value);
 		shape.ctx.lineWidth = this.value;
@@ -54,8 +62,6 @@ Animation.prototype.jInit = function(e){
 	$(this.dID + ' select.anim').change(function(e){
 		animation.animationFunction = plot[this.value].bind(animation.plot);
 	});
-
-
 
 	// Line color change
 	$(this.dID + ' select.lc').change(function(e){

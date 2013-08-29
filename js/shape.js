@@ -11,7 +11,7 @@
 // ccol = center color
 // crad = center radius
 
-function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
+function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad, grid)  {
 	// Grab canvas by ID, use "shape" as default
 	this.dID = typeof(did) === "undefined" ? "" : did;
 	// Use JQuery selector to get the .shape class within the specified div
@@ -27,6 +27,10 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad)  {
 	// Set size of canvas, use 400x400 as default
 	this.canvas.width  = typeof(cwidth)  === "undefined" ? 400 : cwidth;
 	this.canvas.height = typeof(cheight) === "undefined" ? 400 : cheight;
+
+	// Grid size, default = 10 per dimension and grid flag
+	this.gridSize = typeof(grid) === "undefined" ? 10 : grid;
+	this.gridEnable = 0;
 
 	// Get context of canvas for path drawing
 	this.ctx = this.canvas.getContext("2d");
@@ -172,7 +176,9 @@ Shape.prototype.animate = function(index){
 
 	// Clear canvas and redraw contour	
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
 	this.drawContour();
+	this.drawGrid();
 	
 	// Draw a line from	center to next point
 	this.ctx.beginPath();
@@ -200,6 +206,35 @@ Shape.prototype.borderLine = function(index){
 
 }
 
+
+Shape.prototype.drawGrid = function(e){
+	if (this.gridEnable){
+		this.ctx.beginPath();
+		// Draw Y axis grids
+		for (var i = 0; i < Math.round(this.canvas.width / this.gridSize); i++){
+			this.ctx.moveTo(i*(Math.round(this.canvas.width / this.gridSize)), 0);
+			this.ctx.lineTo(i*(Math.round(this.canvas.width / this.gridSize)), this.canvas.height);
+		}
+
+		// Draw X axis grids
+		for (var i = 0; i < Math.round(this.canvas.height / this.gridSize); i++){
+			this.ctx.moveTo(0, i*(Math.round(this.canvas.height / this.gridSize)));
+			this.ctx.lineTo(this.canvas.height, i*(Math.round(this.canvas.height / this.gridSize)));
+		}
+
+		// Store previous line width and style so we don't mess up our actual shape
+		var prevWidth = this.ctx.lineWidth;
+		var prevStyle = this.ctx.strokeStyle;
+
+		this.ctx.lineWidth = 1;
+		this.ctx.strokeStyle = "#000000";
+		this.ctx.stroke();
+		
+		// Reset our previous line style and width
+		this.ctx.lineWidth = prevWidth;
+		this.ctx.strokeStyle = prevStyle;
+	}
+}
 
 // Reset shape to defaults and blank canvas
 Shape.prototype.reset = function(lstyle, lwidth, ccol, crad){
