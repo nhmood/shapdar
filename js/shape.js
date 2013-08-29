@@ -29,7 +29,7 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad, grid)  {
 	this.canvas.height = typeof(cheight) === "undefined" ? 400 : cheight;
 
 	// Grid size, default = 10 per dimension and grid flag
-	this.gridSize = typeof(grid) === "undefined" ? 10 : grid;
+	this.gridSize = typeof(grid) === "undefined" ? 5 : grid;
 	this.gridEnable = 0;
 
 	// Get context of canvas for path drawing
