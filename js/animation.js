@@ -5,7 +5,12 @@
 
 
 // Animation class that handles drawing/rendering
-function Animation(shape, plot){
+function Animation(did, shape, plot){
+ 	// Grab controls by ID, use "controls" as default
+
+	this.dID = typeof(did) === "undefined" ? "#controls" : did;
+
+
 	// Store shape and plot to be associated with this animation internally
 	this.shape = shape;
 	this.plot = plot;
@@ -20,8 +25,47 @@ function Animation(shape, plot){
 	this.currFrame = 0;			// Global frame (position) to sync plot + shape
 	this.contourLength = 0;		// Number of points in contour of shape
 	this.animationFunction = this.plot.animateY.bind(this.plot); 	// Default animation to Y
+
+	// Initialize jQuery calls
+	this.jInit();
 }
 
+
+Animation.prototype.jInit = function(e){
+	// JQuery stuff for option changing
+	// Line width change
+	$( this.dID + ' input.lw').change(function(e){
+		$(this.dID + ' span.lw').text(this.value);
+		shape.ctx.lineWidth = this.value;
+		plot.ctx.lineWidth = this.value;
+	});
+
+
+	// Speed change
+	$(this.dID + ' input.ps').change(function(e){
+		$(this.dID + " span.ps").text(this.value);
+		animation.nPlot = parseInt(this.value);
+	})
+
+	// Animation change
+	$(this.dID + ' select.anim').change(function(e){
+		animation.animationFunction = plot[this.value].bind(animation.plot);
+	});
+
+
+
+	// Line color change
+	$(this.dID + ' select.lc').change(function(e){
+		
+		// If line is red, change center to blue, else keep red
+		shape.ccol = (this.options[this.selectedIndex].text == "Red") ? "#0099ff" : "#c95f5e";
+		
+		// Update stroke styles of shape and plot with updated color
+		shape.ctx.strokeStyle = this.value;
+		plot.ctx.strokeStyle = this.value
+	});
+
+};
 
 
 // Adapted from the Paul Irish & CreativeJS 
@@ -91,3 +135,7 @@ Animation.prototype.stopAnimation = function(e){
 	window.clearTimeout(this.timeoutID);
 	console.log("Stop!");
 }
+
+
+
+
