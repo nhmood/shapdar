@@ -199,3 +199,32 @@ Shape.prototype.borderLine = function(index){
 	this.ctx.fillRect(this.contour.points[index][0]-2.5, this.contour.points[index][1]-2.5, 5, 5);
 
 }
+
+
+// Reset shape to defaults and blank canvas
+Shape.prototype.reset = function(lstyle, lwidth, ccol, crad){
+
+	// Reset line style
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
+
+	// Reste contour
+	this.contour = new Contour();
+
+	// Reset drawing flags
+	this.drawEnable = 0;
+	this.drawComplete = 0;
+
+	// Reset center points
+	this.centerValid = 0;
+	this.centerX = 0;
+	this.centerY = 0;
+
+	// Reset center colors (not really necessary)
+	this.ccol = typeof(ccol) === "undefined" ? "#c95f5e" : ccol;
+	this.crad = typeof(crad) === "undefined" ?     5    : crad;
+
+	// Clear canvas and remove any existing paths
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	this.ctx.beginPath();
+}

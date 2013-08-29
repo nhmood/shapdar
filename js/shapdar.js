@@ -9,8 +9,6 @@
 //		  - Or use simple center of 2d mass with uniform density
 
 
-// MARKUP
-
 
 
 // Run
@@ -18,5 +16,4 @@
 var shape = new Shape("#shapdar", 400, 300);
 var plot = new Plot(shape, "#shapdar", 400, 450);
 var animation = new Animation("#controls", shape, plot);
-
 

@@ -18,6 +18,7 @@ function Animation(did, shape, plot){
 	// Timeout ID used for start/stop animation (initialize to 0)
 	this.timeoutID = 0;
 	this.stopAnim = 0;
+	this.currAnim = 0;
 
 	// Animation settings
 	this.renderFPS = 60;		// FPS
@@ -106,29 +107,32 @@ Animation.prototype.beginAnimation = function(e){
 Animation.prototype.animate = function(e){
 
 
-	// Animation Stuff Here!
-	this.shape.animate(this.currFrame);
-	
-	this.animationFunction(this.currFrame, this.nPlot);
-	this.currFrame += this.nPlot;
-
-
-	// Create a timeout for another requestAnimationFrame
-	// Binding hell commence...not sure the full reason for these binds but I know the problems they solve
-	// First pass this instance of Animation's animate method to the rAF
-	// Bind "this" to it or else you get a Uncaught TypeError: Type Error 
-	// Bind the entire function you pass to rAF to this so it knows what this.animate is
-
-	// Set timeout to 1000/renderFPS which is an Animation parameter to control FPS
-	// Store setTimeout ID return so we can cancel if we want
-	this.timeoutID = setTimeout(function() {
-		window._requestAnimationFrame(this.animate.bind(this));
-	}.bind(this), 1000/this.renderFPS);
-	
 	if (this.stopAnim){
 		this.stopAnim = 0;
-		window.clearTimeout(this.timeoutID);
+		this.timeoutID = 0;
 	}
+	else {
+		// Animation Stuff Here!
+		this.shape.animate(this.currFrame);
+		
+		this.animationFunction(this.currFrame, this.nPlot);
+		this.currFrame += this.nPlot;
+
+
+		// Create a timeout for another requestAnimationFrame
+		// Binding hell commence...not sure the full reason for these binds but I know the problems they solve
+		// First pass this instance of Animation's animate method to the rAF
+		// Bind "this" to it or else you get a Uncaught TypeError: Type Error 
+		// Bind the entire function you pass to rAF to this so it knows what this.animate is
+
+		// Set timeout to 1000/renderFPS which is an Animation parameter to control FPS
+		// Store setTimeout ID return so we can cancel if we want
+		this.timeoutID = setTimeout(function() {
+			window._requestAnimationFrame(this.animate.bind(this));
+		}.bind(this), 1000/this.renderFPS);
+	}
+		
+
 
 }
 
@@ -145,4 +149,22 @@ Animation.prototype.stopAnimation = function(e){
 
 
 
+// Reset animation and corresponding plot and shape
+Animation.prototype.reset = function(e){
+	// Stop any future animations and reset timeoutID
+	this.stopAnim = 1;
+	this.timeoutID = 0;
 
+	// Default animation settings
+	this.renderFPS = 60;		
+	this.nPlot = 3;				
+								
+	this.currFrame = 0;			
+	this.contourLength = 0;		
+	this.animationFunction = this.plot.animateY.bind(this.plot);
+
+	// Call reset functions on shape and plot
+	this.shape.reset();
+	this.plot.reset();
+
+}

@@ -125,3 +125,18 @@ Plot.prototype.animateBC = function(index, skip){
 	this.shape.borderLine(index);
 }
 
+// Reset plot to defaults and blank canvas
+Plot.prototype.reset = function(lstyle, lwidth){
+
+	// Reset line style
+	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#323232" : lstyle;
+	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
+
+	// Reset plot points and count
+	this.points = Array.apply(null, new Array(this.canvas.width)).map(Number.prototype.valueOf,(this.canvas.height/2));
+	this.pointCount = 0;
+
+	// Clear canvas and remove any existing paths
+	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	this.ctx.beginPath();
+}
