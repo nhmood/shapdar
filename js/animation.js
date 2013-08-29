@@ -17,6 +17,7 @@ function Animation(did, shape, plot){
 	
 	// Timeout ID used for start/stop animation (initialize to 0)
 	this.timeoutID = 0;
+	this.stopAnim = 0;
 
 	// Animation settings
 	this.renderFPS = 60;		// FPS
@@ -123,7 +124,12 @@ Animation.prototype.animate = function(e){
 	this.timeoutID = setTimeout(function() {
 		window._requestAnimationFrame(this.animate.bind(this));
 	}.bind(this), 1000/this.renderFPS);
-		
+	
+	if (this.stopAnim){
+		this.stopAnim = 0;
+		window.clearTimeout(this.timeoutID);
+	}
+
 }
 
 
@@ -133,7 +139,7 @@ Animation.prototype.animate = function(e){
 // [todo] - Sometimes triggers but timeout is already done and new one set
 //		  - Fix so it grabs right ID and halts for sure
 Animation.prototype.stopAnimation = function(e){
-	window.clearTimeout(this.timeoutID);
+	this.stopAnim = 1;
 	console.log("Stop!");
 }
 
