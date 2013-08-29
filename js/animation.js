@@ -34,8 +34,9 @@ function Animation(did, shape, plot){
 Animation.prototype.jInit = function(e){
 	// JQuery stuff for option changing
 	// Line width change
+	var that = this;
 	$( this.dID + ' input.lw').change(function(e){
-		$(this.dID + ' span.lw').text(this.value);
+		$(that.dID + ' span.lw').text(this.value);
 		shape.ctx.lineWidth = this.value;
 		plot.ctx.lineWidth = this.value;
 	});
@@ -43,7 +44,7 @@ Animation.prototype.jInit = function(e){
 
 	// Speed change
 	$(this.dID + ' input.ps').change(function(e){
-		$(this.dID + " span.ps").text(this.value);
+		$(that.dID + " span.ps").text(this.value);
 		animation.nPlot = parseInt(this.value);
 	})
 
