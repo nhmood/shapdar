@@ -60,8 +60,10 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad, grid)  {
 	this.ccol = typeof(ccol) === "undefined" ? "#0099ff" : ccol;
 	this.crad = typeof(crad) === "undefined" ?     5    : crad;
 
+	// Default Shape drawing function
+	this.shapeDraw = this.freeDraw;
+};
 
-}
 
 Shape.prototype.mouseDown = function(e){
 	// If we haven't drawn our shape yet, draw our shape!
@@ -92,24 +94,19 @@ Shape.prototype.mouseDown = function(e){
 	}
 };
 
+
 Shape.prototype.mouseMove = function(e){
-	// If drawing is enabled, draw the line\
+	// If drawing is enabled, draw the line
 	if (this.drawEnable){
 		// Store coords at mouse location 
 		var x = e.offsetX;
 		var y = e.offsetY;
 
-		// Add this point to our contour
-		this.contour.addPoint(x, y);
-
-		// Draw the point itself using a path
-		// We need this to be done instantaneously for the user
-		// So using a path is better than drawing each individual contour point
-		// We will draw actual contour points as rectangles after full path is done
-		this.ctx.lineTo(x, y);
-		this.ctx.stroke();
+		// Run current drawing function with state = 0 --> mouseMove
+		this.shapeDraw(x, y, 0);		
 	}
 };
+
 
 Shape.prototype.mouseUp = function(e){
 	if (this.drawEnable){
@@ -117,6 +114,157 @@ Shape.prototype.mouseUp = function(e){
 		var x = e.offsetX;
 		var y = e.offsetY;
 
+		// Run current drawing function with state = 1 --> mouseUp
+		this.shapeDraw(x, y, 1);
+		
+	}
+};
+
+
+Shape.prototype.squareDraw = function(x, y, state){
+	// If called on mouseMove
+	if (state == 0){
+		// Clear the canvas and draw box from mouseDown point to current coords
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);	
+		
+		this.ctx.beginPath();
+		// Draw from origin -> straight vertical line (shift y)
+		this.ctx.moveTo(this.contour.startX, this.contour.startY);
+		this.ctx.lineTo(this.contour.startX, y);
+		// Draw from origin -> straight horizontal line (shift x)
+		this.ctx.moveTo(this.contour.startX, this.contour.startY);
+		this.ctx.lineTo(x, this.contour.startY);
+		// Draw from origin x / new y -> horizontal line (shift x)
+		this.ctx.moveTo(this.contour.startX, y);
+		this.ctx.lineTo(x, y);
+		// Draw from origin y / new x -> vertical line (shift y)
+		this.ctx.moveTo(x, this.contour.startY);
+		this.ctx.lineTo(x, y);
+
+		// Stroke so its visible
+		this.ctx.stroke();
+	}
+	// If called on mouseUp
+	else {
+		// Now we just have to use contour.addPoint on the 4 coords
+		// and it SHOULD interpolate the line for us!
+		// Add points in clockwise fashion
+		this.contour.addPoint(x, this.contour.startY);
+		this.contour.addPoint(x, y);
+		this.contour.addPoint(this.contour.startX, y);
+		this.contour.addPoint(this.contour.startX, this.contour.startY);
+
+		// Need a sufficiently sized shape
+		// Also prevents accidental clicks
+		if (this.contour.points.length > 10){
+			// Draw contour using actual rectangles
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.drawContour();
+
+			// Stop drawing
+			this.drawEnable = 0;
+			this.drawComplete = 1;
+		}
+		// If not big enough, reset canvas, allow drawing, and reset params
+		else {
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.contour = new Contour();
+			this.drawEnable = 0;
+			this.drawComplete = 0;
+		}
+	}
+}
+
+
+Shape.prototype.circleDraw = function(x, y, state){
+	// If called on mouseMove
+	if (state == 0){
+		// Clear the canvas
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);	
+		
+		// We can draw a circle with mouseDown being the center and the larger
+		// of x/y being the radius, where radius is distance from center to new x/y
+		var radiusX = Math.abs(this.contour.startX - x);
+		var radiusY = Math.abs(this.contour.startY - y);
+
+		// Because we are drawing this every mouseMove, keep it simple and just use canvas arc
+		// Use startX/Y, biggest radius (X/Y), full 360 arc, and clockwise drawing
+		this.ctx.beginPath();
+		this.ctx.arc(this.contour.startX, this.contour.startY, Math.max(radiusX, radiusY), 0, 360, false);
+		this.ctx.stroke();
+	}
+	// If called on mouseUp
+	else {
+		// Store the center points as we need them, but don't want them in our contour
+		var startX = this.contour.startX;
+		var startY = this.contour.startY;
+
+		// Clear the contour and calculate new radii based on distance from center to current x/y
+		this.contour = new Contour();
+		var radiusX = Math.abs(startX - x);
+		var radiusY = Math.abs(startY - y);
+
+
+		// We know the radius and the angle so lets use some good ol' trig! 
+		// SOH-CAH-TOA! Just SOH and CAH really...sorry TOA
+		// SOH => Sin(angle) = Opposite / Hypotenuse
+		// CAH => Cos(angle) = Adjacent / Hypotenuse
+		// Opposite = height(y), Adjacent = width(x), Hypotenuse = radius()
+
+		// Math.sin(x) takes its input in degrees radian,
+		// so gotta convert degrees to rad
+
+		// Go through entire 360 degrees of the circle
+		for (var i = 1; i < 360; i++){
+			// Convert degree to rad
+			var rad = i * (Math.PI / 180);
+
+			// Calculate x and y of point on circle using SOH (for x) and CAH (for y)
+			var xC = Math.cos(rad) * Math.max(radiusX, radiusY); 
+			var yC = Math.sin(rad) * Math.max(radiusX, radiusY);
+
+			// Add points to the contour
+			this.contour.addPoint(Math.round(xC)+startX, Math.round(yC)+startY);
+		}
+
+
+		// Need a sufficiently sized shape
+		// Also prevents accidental clicks
+		if (this.contour.points.length > 10){
+			// Draw contour using actual rectangles
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.drawContour();
+
+			// Drawing complete
+			this.drawEnable = 0;
+			this.drawComplete = 1;
+		}
+		// If not big enough, reset canvas, allow drawing, and reset params
+		else {
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.contour = new Contour();
+			this.drawEnable = 0;
+			this.drawComplete = 0;
+		}
+	}
+};
+
+
+
+Shape.prototype.freeDraw = function(x, y, state){
+	// If called on mouseMove 
+	if (state == 0){
+		// Add this point to our contour
+		this.contour.addPoint(x, y);
+
+		// Draw the point itself using a path
+		// We need this to be done instantaneously for the user
+		// So using a path is easier than drawing each individual contour point
+		// We will draw actual contour points as rectangles after full path is done
+		this.ctx.lineTo(x, y);
+		this.ctx.stroke();
+	}
+	else {
 		// Need a sufficiently sized shape
 		// Also prevents accidental clicks
 		if (this.contour.points.length > 10){
@@ -130,11 +278,11 @@ Shape.prototype.mouseUp = function(e){
 			this.ctx.stroke();
 			this.ctx.closePath();
 
-			// Draw contour using actual rectangles then save context so we can
-			// redraw this every frame next time 
+			// Draw contour using actual rectangles
 			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 			this.drawContour();
 
+			// Drawing complete
 			this.drawEnable = 0;
 			this.drawComplete = 1;
 		}
@@ -147,6 +295,7 @@ Shape.prototype.mouseUp = function(e){
 		}
 	}
 };
+
 
 Shape.prototype.drawContour = function(e){
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -164,6 +313,7 @@ Shape.prototype.drawContour = function(e){
 		this.ctx.fillRect(this.contour.points[i][0]-2, this.contour.points[i][1]-2, this.ctx.lineWidth, this.ctx.lineWidth+1);
 	}
 }
+
 
 Shape.prototype.drawCenter = function(e){
 	this.ctx.fillStyle = this.ccol;
@@ -197,13 +347,12 @@ Shape.prototype.borderLine = function(index){
 	// Fill rect from current x position to width of canvas @ y position
 	for (var i = this.contour.points[index][0]; i < this.canvas.width; i++){
 		this.ctx.fillStyle = this.ctx.strokeStyle;
-		this.ctx.fillRect(i, this.contour.points[index][1], this.ctx.lineWidth, this.ctx.lineWidth);
+		this.ctx.fillRect(i, this.contour.points[index][1]-(this.ctx.lineWidth/2), this.ctx.lineWidth, this.ctx.lineWidth);
 	}
 
 	// Fill in intersection point with dot
 	this.ctx.fillStyle = this.ccol;
 	this.ctx.fillRect(this.contour.points[index][0]-2.5, this.contour.points[index][1]-2.5, 5, 5);
-
 }
 
 
@@ -236,6 +385,7 @@ Shape.prototype.drawGrid = function(e){
 	}
 }
 
+
 // Reset shape to defaults and blank canvas
 Shape.prototype.reset = function(lstyle, lwidth, ccol, crad){
 
@@ -243,8 +393,11 @@ Shape.prototype.reset = function(lstyle, lwidth, ccol, crad){
 	this.ctx.strokeStyle = typeof(lstyle) === "undefined" ? "#c95f5e" : lstyle;
 	this.ctx.lineWidth   = typeof(lwidth) === "undefined" ?    3      : lwidth;
 
-	// Reste contour
+	// Restore contour
 	this.contour = new Contour();
+
+	// Restore drawing function
+	this.shapeDraw = this.freeDraw;
 
 	// Reset drawing flags
 	this.drawEnable = 0;

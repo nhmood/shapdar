@@ -29,14 +29,14 @@ function Plot(shape, did, cheight, cwidth){
 	this.points = Array.apply(null, new Array(this.canvas.width)).map(Number.prototype.valueOf,(this.canvas.height/2));
 	this.pointCount = 0;
 	this.shape = shape;
-}
+};
 
 // Windowed push function
 // Push to front and pop out of back to this instances points array
 Plot.prototype.push = function(value) {
 	this.points.pop();
 	this.points.unshift(value);
-}
+};
 
 Plot.prototype.drawGrid = function(e){
 	if (this.shape.gridEnable){
@@ -65,7 +65,7 @@ Plot.prototype.drawGrid = function(e){
 		this.ctx.lineWidth = prevWidth;
 		this.ctx.strokeStyle = prevStyle;
 	}
-}
+};
 
 
 // Animation for X position
@@ -87,7 +87,7 @@ Plot.prototype.animateX = function(index, skip){
 
 	this.drawGrid();
 
-}
+};
 
 // Animation for Y position
 Plot.prototype.animateY = function(index, skip){
@@ -103,13 +103,13 @@ Plot.prototype.animateY = function(index, skip){
 	// Draw all the points in the points array 
 	this.ctx.fillStyle = this.ctx.strokeStyle;
 	for (var i = 0; i < this.canvas.width; i++){
-		this.ctx.fillRect(i, this.points[i], this.ctx.lineWidth, this.ctx.lineWidth);
+		this.ctx.fillRect(i, this.points[i] - (this.ctx.lineWidth/2), this.ctx.lineWidth, this.ctx.lineWidth);
 	}
 
 	this.shape.borderLine(index);
 		this.drawGrid();
 
-}
+};
 
 // Animation for distance from center
 Plot.prototype.animateD = function(index, skip){
@@ -135,8 +135,7 @@ Plot.prototype.animateD = function(index, skip){
 	}
 
 	this.drawGrid();
-
-}
+};
 
 // Bit Crusher animation
 Plot.prototype.animateBC = function(index, skip){
@@ -157,8 +156,7 @@ Plot.prototype.animateBC = function(index, skip){
 	this.shape.borderLine(index);
 
 	this.drawGrid();
-
-}
+};
 
 // Reset plot to defaults and blank canvas
 Plot.prototype.reset = function(lstyle, lwidth){
@@ -174,4 +172,4 @@ Plot.prototype.reset = function(lstyle, lwidth){
 	// Clear canvas and remove any existing paths
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.ctx.beginPath();
-}
+};

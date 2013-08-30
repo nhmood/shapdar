@@ -30,7 +30,7 @@ function Animation(did, shape, plot){
 
 	// Initialize jQuery calls
 	this.jInit();
-}
+};
 
 // jQuery stuff for option changing 
 // This stuff is pretty messy, like really messy
@@ -60,6 +60,12 @@ Animation.prototype.jInit = function(e){
 
 	// Animation change
 	$(this.dID + ' select.anim').change(function(e){
+		// This syntax is pretty nifty
+		// plot is this animations plot object (tied to our plot canvas)
+		// this.value is the name of the function we want to use to animate (if our HTML is right)
+		// plot[this.value] -> bracket notation for accessing objects properties
+		// Advantage of bracker [] over dot . is that you can throw strings in there and it'll work
+		// Not sure if object."propertyasastring" would work but don't think object.thisvalue would?
 		animation.animationFunction = plot[this.value].bind(animation.plot);
 	});
 
@@ -72,6 +78,12 @@ Animation.prototype.jInit = function(e){
 		// Update stroke styles of shape and plot with updated color
 		shape.ctx.strokeStyle = this.value;
 		plot.ctx.strokeStyle = this.value
+	});
+
+	// Draw type
+	$(this.dID + ' select.draw').change(function(e){
+		// Same nifty syntax as animation change
+		shape.shapeDraw = shape[this.value].bind(animation.shape);
 	});
 
 };
@@ -106,7 +118,7 @@ Animation.prototype.beginAnimation = function(e){
 	else {
 		console.log("Hey now, draw a shape and a center please!");
 	}
-}
+};
 
 
 // Animation handler
@@ -137,10 +149,7 @@ Animation.prototype.animate = function(e){
 			window._requestAnimationFrame(this.animate.bind(this));
 		}.bind(this), 1000/this.renderFPS);
 	}
-		
-
-
-}
+};
 
 
 
@@ -151,7 +160,7 @@ Animation.prototype.animate = function(e){
 Animation.prototype.stopAnimation = function(e){
 	this.stopAnim = 1;
 	console.log("Stop!");
-}
+};
 
 
 
@@ -190,5 +199,7 @@ Animation.prototype.reset = function(e){
 
 	// Reset line color
 	$(this.dID + ' select.lc').val('');
-}
 
+	// Reset draw type
+	$(this.dID + ' select.draw').val('');
+};

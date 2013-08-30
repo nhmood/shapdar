@@ -14,9 +14,10 @@ function Contour(startx, starty) {
 	this.points = new Array();
 }
 
-Contour.prototype.addPoint = function(x, y){
+Contour.prototype.addPoint = function(x, y, override){
 	// If this is the first point to be added, set as startXY also
-	if (this.points.length == 0){
+	// unless override flag is passed to addPoint
+	if (this.points.length == 0 && override !== 'undefined'){
 		this.points.push([x, y]);
 		this.startX = x;
 		this.startY = y;
