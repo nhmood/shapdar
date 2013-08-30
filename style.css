@@ -28,6 +28,14 @@ a {
     -o-transition: color 0.5s ease-in-out;
 }
 
+
+#github {
+    position: absolute;
+    top: 0;
+    right: 0;
+	z-index: 1;
+}
+
 a:hover {
     color: #323232;
     text-decoration: none;
@@ -39,6 +47,7 @@ a:hover {
 }
 
 #title h1 {
+
 	display: inline-block;
 	margin: 0px 0px;
 
@@ -46,6 +55,8 @@ a:hover {
 }
 
 #title h2 {
+	color: #0099ff;
+
 	display: inline-block;
 	margin: 0px 0px;
 	padding-left: 185px;
@@ -67,10 +78,12 @@ a:hover {
 	text-align: center;
 }
 
+#intro hr {
+	color: #323232;
+	margin: 0px 100px;
+}
+
 #controls {
-	display: table-cell;
-	width: 40%;
-	vertical-align: top;
 	font-size: 25px;
 }
 
@@ -82,12 +95,31 @@ a:hover {
 	text-align: center;
 }
 
+#controls #left {
+	display: inline-block;
+	vertical-align: top;
+	width: 300px;
+	margin: 0px 10px;
+}
+
+#controls #right {
+	vertical-align: top;
+	display: inline-block;
+	width: 300px;
+	margin: 0px 80px;
+}
+
+#shapdar {
+}
+
+#shapdar hr {
+	color: #323232;
+	margin: 0px 120px;
+	margin-top: 10px;
+}
 
 #instructions {
-	display: table-cell;
-	vertical-align: top;	
-
-	text-align: left;
+	margin: 0px 150px;
 }
 
 #instructions h1 {
@@ -103,10 +135,18 @@ a:hover {
 	padding: 0px;
 
 	font-size: 25px;
+	text-align: center;
 }
+
 
 #instructions li {
 	font-size: 25px;
+}
+
+#instructions hr {
+	margin: 0px 100px;
+	margin-bottom: 20px;
+	margin-top: -30px;
 }
 
 #note {

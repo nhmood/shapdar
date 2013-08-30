@@ -14,6 +14,6 @@
 // Run
 // Create necessary components, use desired size + divs
 var shape = new Shape("#shapdar", 400, 300);
-var plot = new Plot(shape, "#shapdar", 400, 450);
+var plot = new Plot(shape, "#shapdar", 400, 490);
 var animation = new Animation("#controls", shape, plot);
 
