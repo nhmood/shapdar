@@ -1,9 +1,14 @@
+@font-face {
+	font-family: "Indie Flower Local";
+	src: url("fonts/IndieFlower.ttf");
+}    
+
 body {
 	position: static;
 	margin: auto;
 	width: 800px;
 
-	font-family: 'Indie Flower', cursive;
+	font-family: 'Indie Flower', 'Indie Flower Local', Georgia, serif;
     -webkit-font-smoothing: antialiased !important;
 }
 
@@ -12,7 +17,17 @@ canvas {
 }
 
 button, select  {
-	font-family: 'Indie Flower', cursive;
+	font-family: 'Indie Flower', 'Indie Flower Local', Georgia, serif;
+    font-size: 25px;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+canvas {
+	border: 1px solid black;
+}
+
+button, select  {
+	font-family: 'Indie Flower', 'Indie Flower Local', Georgia, serif;
     font-size: 25px;
     -webkit-font-smoothing: antialiased !important;
 }
