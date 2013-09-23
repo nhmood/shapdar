@@ -23,7 +23,10 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad, grid)  {
 	this.canvas.addEventListener("mousedown", this.mouseDown.bind(this));
 	this.canvas.addEventListener("mousemove", this.mouseMove.bind(this));
 	this.canvas.addEventListener("mouseup"  , this.mouseUp.bind(this)); 
-
+	
+	// Shift key listener should be added to window, not canvas
+	window.addEventListener("keydown", this.keyDown.bind(this));
+	window.addEventListener("keyup"  , this.keyUp.bind(this));
 	// Set size of canvas, use 400x400 as default
 	this.canvas.width  = typeof(cwidth)  === "undefined" ? 400 : cwidth;
 	this.canvas.height = typeof(cheight) === "undefined" ? 400 : cheight;
@@ -50,6 +53,10 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad, grid)  {
 	// drawComplete - Flag for when drawing is completed
 	this.drawEnable = 0;
 	this.drawComplete = 0;
+
+	// straightDraw - Flag when shift key held down to draw straight lines
+	this.straightDraw = 0;
+	this.straightDir = new Array();
 
 	// Center point for shape that line is drawn from
 	this.centerValid = 0;
@@ -119,6 +126,24 @@ Shape.prototype.mouseUp = function(e){
 		
 	}
 };
+
+Shape.prototype.keyDown = function(e){
+	if (e.keyCode == 16){
+		console.log("Shift key down");
+		this.straightDraw = 1;
+		//this.straightX = this.contour.points.slice(-1)[0][0];
+		//this.straightY = this.contour.points.slice(-1)[0][1];
+	}			
+}
+
+Shape.prototype.keyUp = function(e){
+	if (e.keyCode == 16){
+		console.log("Shift key up");
+		this.straightDraw = 0;
+		this.straightX = 0;
+		this.straightY = 0;
+	}			
+}
 
 
 Shape.prototype.squareDraw = function(x, y, state){
@@ -254,6 +279,37 @@ Shape.prototype.circleDraw = function(x, y, state){
 Shape.prototype.freeDraw = function(x, y, state){
 	// If called on mouseMove 
 	if (state == 0){
+		// If shift key is pressed, we are in straight edge mode
+		// Lock down first dimension to show movement (x / y)
+		// Only do this if we already have established movement
+		if ((this.straightDraw == 1) && (this.contour.points.length != 0)) {
+
+			// Get distance from last x/y positions
+			var xD = Math.abs(x - this.contour.points.slice(-1)[0][0]);
+			var yD = Math.abs(y - this.contour.points.slice(-1)[0][1]);
+
+			// Depending on which is bigger, freeze the opposite direction
+			this.straightDir = xD > yD ? [0, y] : [1, x];
+
+			// Increment this so we can lock the position and not repeat this part
+			// of the check
+			this.straightDraw++;
+		}
+
+		// If we already locked on a dimension
+		if ((this.straightDraw == 2)){
+			// If the direction we determined is x (lock y)
+			if (this.straightDir[0] == 0){
+				// Set the Y coord to what we froze it to
+				y = this.straightDir[1];
+			}
+			else {
+				// Else set the X coord to waht we froze it to
+				x = this.straightDir[1];
+			}
+		}
+
+
 		// Add this point to our contour
 		this.contour.addPoint(x, y);
 
