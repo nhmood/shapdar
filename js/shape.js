@@ -73,14 +73,16 @@ function Shape(did, cheight, cwidth, lstyle, lwidth, ccol, crad, grid)  {
 
 
 Shape.prototype.mouseDown = function(e){
+	var offset = getOffset(e);
+
 	// If we haven't drawn our shape yet, draw our shape!
 	if (!this.drawComplete){
 		// Enable drawing for mousemove listener
 		this.drawEnable = 1;
 
 		// Add starting points to contour
-		this.contour.addPoint(e.offsetX, e.offsetY);
-		this.ctx.moveTo(e.offsetX, e.offsetY);
+		this.contour.addPoint(offset.x, offset.y);
+		this.ctx.moveTo(offset.x, offset.y);
 	}
 	// If shape is drawn and mouse is clicked, register new center point
 	else {
@@ -88,8 +90,8 @@ Shape.prototype.mouseDown = function(e){
 		this.centerValid = 1;
 
 		// Set center for this instance
-		this.centerX = e.offsetX;
-		this.centerY = e.offsetY;
+		this.centerX = offset.x;
+		this.centerY = offset.y;
 
 		// Clear canvas, restore original shape, and place new center
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -103,11 +105,13 @@ Shape.prototype.mouseDown = function(e){
 
 
 Shape.prototype.mouseMove = function(e){
+	var offset = getOffset(e);
+
 	// If drawing is enabled, draw the line
 	if (this.drawEnable){
 		// Store coords at mouse location 
-		var x = e.offsetX;
-		var y = e.offsetY;
+		var x = offset.x;
+		var y = offset.y;
 
 		// Run current drawing function with state = 0 --> mouseMove
 		this.shapeDraw(x, y, 0);		
@@ -116,10 +120,12 @@ Shape.prototype.mouseMove = function(e){
 
 
 Shape.prototype.mouseUp = function(e){
+	var offset = getOffset(e);
+
 	if (this.drawEnable){
 		// Store coords at mouse location
-		var x = e.offsetX;
-		var y = e.offsetY;
+		var x = offset.x;
+		var y = offset.y;
 
 		// Run current drawing function with state = 1 --> mouseUp
 		this.shapeDraw(x, y, 1);
@@ -472,3 +478,26 @@ Shape.prototype.reset = function(lstyle, lwidth, ccol, crad){
 	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.ctx.beginPath();
 }
+
+// Function for calculating offsetX and offsetY in Firefox
+// From http://nickthecoder.wordpress.com/2013/02/26/offsetx-and-offsety-in-firefox/
+function getOffset(evt) {
+	if(evt.offsetX!=undefined)
+		return {x:evt.offsetX,y:evt.offsetY};
+
+	var el = evt.target;
+	var offset = {x:0,y:0};
+
+	while(el.offsetParent)
+	{
+		offset.x+=el.offsetLeft;
+		offset.y+=el.offsetTop;
+		el = el.offsetParent;
+	}
+
+	offset.x = evt.pageX - offset.x;
+	offset.y = evt.pageY - offset.y;
+
+	return offset;
+}
+
