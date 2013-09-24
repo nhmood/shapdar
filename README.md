@@ -46,9 +46,9 @@ is determined and added to an array each frame, creating a function vs. time dis
 
 
 
-## Issues (as of 9/22/13)
-  * Only works with __Chrome__
-    * Does NOT work with __Firefox__
-    * Has not been tested with any other browser
-   * Does NOT work with __mobile__
-     * mouseUp/Down/Move events don't really work the same way on mobile I guess
+## Issues (as of 9/23/13)
+  * Does NOT work with IE...who am I kidding, it absolutely destroys IE  
+  	Breaks IE so hard you actually have to physically reboot your system...  
+
+  * Does NOT work with __mobile__  
+    mouseUp/Down/Move events don't really work the same way on mobile I guess
