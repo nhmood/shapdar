@@ -77,6 +77,11 @@ Shape.prototype.mouseDown = function(e){
 
 	// If we haven't drawn our shape yet, draw our shape!
 	if (!this.drawComplete){
+		// Clear canvas so we remove any extra stuff that might be
+		// left like warning messages
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	
+
 		// Enable drawing for mousemove listener
 		this.drawEnable = 1;
 

@@ -116,7 +116,18 @@ Animation.prototype.beginAnimation = function(e){
 	
 	}
 	else {
-		console.log("Hey now, draw a shape and a center please!");
+		// We need more than just a console.log, people aren't realizing a center is necessary
+		// Use canvas text to inform user that either a shape or center is necessary
+		if (!shape.drawComplete){
+			shape.ctx.font = "bold 12px Indie Flower";
+			shape.ctx.fillText("Please draw a shape first!", 10, 20);
+			console.log("Hey now, draw a shape please!");
+		}
+		else {
+			shape.ctx.font = "bold 12px Indie Flower";
+			shape.ctx.fillText("Please click somewhere here to draw a center!", 10, 20);
+			console.log("Hey now, draw a shape and a center please!");
+		}
 	}
 };
 
