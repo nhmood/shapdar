@@ -7,7 +7,7 @@ Then I thought, I bet I could do that, for any arbitrary shape.
 Then I did, yeahhhhhhh.  
 
 
-### See shapdar in action [here](http://goosecode.com/shapdar)
+### See shapdar in action [here](http://goosecode.com/shapdar) ([mirror](http://nhmood.github.io/shapdar/))
 
 
 ## Structure
