@@ -39,7 +39,7 @@ __shape.js__ also performs the calculations and control logic for animations of 
 
 ### plot.js
 All components related to the "plot" portion of shapdar are managed here. This includes drawing the various plot functions with relation
-to the shape drawn in the __shape.js__ region. Currently, this supports plotting the the X distance, Y distance, distance from center, and a 
+to the shape drawn in the __shape.js__ region. Currently, this supports plotting the X distance, Y distance, distance from center, and a 
 "bitcrusher" mode (that was accidentally born from a bug, but turned out to be super cool). The contour point (synchronized to __shape.js__)
 is determined and added to an array each frame, creating a function vs. time display on each frame render.
  __animation.js__ is used here to synchronize the plotting function animations with the corresponding shape animation.
